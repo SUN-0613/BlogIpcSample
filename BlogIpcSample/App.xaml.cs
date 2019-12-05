@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 
 namespace BlogIpcSample
 {
@@ -19,8 +13,7 @@ namespace BlogIpcSample
 
             base.OnStartup(e);
 
-            // Commonプロジェクト内のClass1クラスを参照
-            var common = new Common.Class1();
+            
 
         }
 
