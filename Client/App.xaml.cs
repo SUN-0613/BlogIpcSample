@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Server
+namespace Client
 {
     /// <summary>
     /// App.xaml の相互作用ロジック
@@ -15,9 +15,10 @@ namespace Server
 
             base.OnStartup(e);
 
-            new Forms.View.ServerView().ShowDialog();
+            new Forms.View.ClientView().ShowDialog();
 
         }
 
     }
+
 }
