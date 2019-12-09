@@ -16,18 +16,27 @@ namespace Server.Forms.Model
         /// <param name="value">表示データ</param>
         public delegate void UpdatePropertyDelegate(int value);
 
+        /// <summary>ボタン操作許可プロパティ更新デリゲート</summary>
+        /// <param name="value">更新値</param>
+        public delegate void UpdateEnabledDelegate(bool value);
+
         /// <summary>IPC通信サービス</summary>
         private ServiceHost _Host;
 
         /// <summary>プロパティ更新メソッド</summary>
         private UpdatePropertyDelegate _UpdateProperty;
 
+        /// <summary>ボタン操作許可プロパティ更新</summary>
+        private UpdateEnabledDelegate _UpdateEnabled;
+
         /// <summary>サーバModel</summary>
         /// <param name="updateProperty">プロパティ更新メソッド</param>
-        public ServerModel(UpdatePropertyDelegate updateProperty)
+        /// <param name="updateEnabled">ボタン操作許可プロパティ更新デリゲート</param>
+        public ServerModel(UpdatePropertyDelegate updateProperty, UpdateEnabledDelegate updateEnabled)
         {
 
             _UpdateProperty = updateProperty;
+            _UpdateEnabled = updateEnabled;
 
             // IPC通信サービス開始
             _Host = new ServiceHost(this, new Uri(Service.GetBaseAddress()));
@@ -58,6 +67,9 @@ namespace Server.Forms.Model
             return Task.Run(() => 
             {
 
+                // ボタン操作不許可
+                _UpdateEnabled(false);
+
                 // 何か重たい処理
                 for (var i = 0; i < sec; i++)
                 {
@@ -69,6 +81,9 @@ namespace Server.Forms.Model
                     _UpdateProperty(value);
 
                 }
+
+                // ボタン操作許可
+                _UpdateEnabled(true);
 
                 return value;
 

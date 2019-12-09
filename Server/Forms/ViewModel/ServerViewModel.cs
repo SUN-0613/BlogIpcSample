@@ -22,18 +22,22 @@ namespace Server.Forms.ViewModel
         /// <summary>切断コマンド</summary>
         public DelegateCommand CloseCommand { get; private set; }
 
+        /// <summary>ボタン操作許可</summary>
+        public bool IsEnabled { get; set; } = true;
+
         #endregion
 
         /// <summary>サーバ.ViewModel</summary>
         public ServerViewModel()
         {
 
-            _Model = new Model.ServerModel(UpdateProperty);
+            _Model = new Model.ServerModel(UpdateProperty, UpdateEnabled);
 
             CloseCommand = new DelegateCommand(
                 () => 
                 {
                     _Model?.Dispose();
+                    UpdateEnabled(false);
                 },
                 () => true);
 
@@ -47,6 +51,14 @@ namespace Server.Forms.ViewModel
             PresentValue = value;
             CallPropertyChanged(nameof(PresentValue));
 
+        }
+
+        /// <summary>ボタン操作許可プロパティ更新</summary>
+        /// <param name="value">更新値</param>
+        private void UpdateEnabled(bool value)
+        {
+            IsEnabled = value;
+            CallPropertyChanged(nameof(IsEnabled));
         }
 
     }

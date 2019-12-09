@@ -22,7 +22,7 @@
         <TextBlock Grid.Column="0" Text="Result = " VerticalAlignment="Center" TextAlignment="Right" />
         <TextBlock Grid.Column="1" Text="{Binding Result}" VerticalAlignment="Center" TextAlignment="Left" />
 
-        <Button Grid.Row="1" Grid.ColumnSpan="2" Content="プロセス間通信実行" >
+        <Button Grid.Row="1" Grid.ColumnSpan="2" Content="プロセス間通信実行" IsEnabled="{Binding IsEnabled}" >
             <Button.InputBindings>
                 <MouseBinding MouseAction="LeftClick" Command="{Binding ExecuteCommand}" />
             </Button.InputBindings>
