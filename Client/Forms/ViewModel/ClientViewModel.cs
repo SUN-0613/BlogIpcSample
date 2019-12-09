@@ -31,11 +31,11 @@ namespace Client.Forms.ViewModel
             _Model = new Model.ClientModel();
 
             ExecuteCommand = new DelegateCommand(
-                () => 
+                async () => 
                 {
 
                     // プロセス間通信でサーバに指示を出し、結果を受け取る
-                    Result = _Model.ExecuteServerSide();
+                    Result = await _Model.ExecuteServerSideAsync();
                     CallPropertyChanged(nameof(Result));
 
                 },

@@ -1,5 +1,6 @@
 ﻿using Common.IPC;
 using System.ServiceModel;
+using System.Threading.Tasks;
 
 namespace Client.Forms.Model
 {
@@ -23,9 +24,9 @@ namespace Client.Forms.Model
         }
 
         /// <summary>プロセス間通信実行</summary>
-        public int ExecuteServerSide()
+        public async Task<int> ExecuteServerSideAsync()
         {
-            return _Server.Execute(5);
+            return await _Server.ExecuteAsync(5);
         }
 
     }

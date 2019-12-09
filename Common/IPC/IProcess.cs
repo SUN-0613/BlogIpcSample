@@ -1,4 +1,5 @@
 ﻿using System.ServiceModel;
+using System.Threading.Tasks;
 
 namespace Common.IPC
 {
@@ -11,7 +12,7 @@ namespace Common.IPC
         /// <summary>サーバー側でメソッドを実行し、戻り値をクライアントに渡す</summary>
         /// <param name="sec">処理秒数</param>
         [OperationContract]
-        int Execute(int sec);
+        Task<int> ExecuteAsync(int sec);
 
     }
 

@@ -2,6 +2,7 @@
 using System;
 using System.ServiceModel;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Server.Forms.Model
 {
@@ -11,12 +12,22 @@ namespace Server.Forms.Model
     public class ServerModel : IProcess, IDisposable
     {
 
+        /// <summary>プロパティ更新デリゲート</summary>
+        /// <param name="value">表示データ</param>
+        public delegate void UpdatePropertyDelegate(int value);
+
         /// <summary>IPC通信サービス</summary>
         private ServiceHost _Host;
 
+        /// <summary>プロパティ更新メソッド</summary>
+        private UpdatePropertyDelegate _UpdateProperty;
+
         /// <summary>サーバModel</summary>
-        public ServerModel()
+        /// <param name="updateProperty">プロパティ更新メソッド</param>
+        public ServerModel(UpdatePropertyDelegate updateProperty)
         {
+
+            _UpdateProperty = updateProperty;
 
             // IPC通信サービス開始
             _Host = new ServiceHost(this, new Uri(Service.GetBaseAddress()));
@@ -29,6 +40,8 @@ namespace Server.Forms.Model
         public void Dispose()
         {
 
+            _UpdateProperty = null;
+
             // IPC通信サービス終了
             _Host.Close();
 
@@ -36,22 +49,30 @@ namespace Server.Forms.Model
 
         /// <summary>IPC通信処理実行</summary>
         /// <param name="sec">処理秒数</param>
-        int IProcess.Execute(int sec)
+        Task<int> IProcess.ExecuteAsync(int sec)
         {
 
             var value = -1;
             var random = new Random();
 
-            // 何か重たい処理
-            for (var i = 0; i < sec; i++)
+            return Task.Run(() => 
             {
 
-                Thread.Sleep(1000);
-                value = random.Next();
+                // 何か重たい処理
+                for (var i = 0; i < sec; i++)
+                {
 
-            }
+                    Thread.Sleep(1000);
+                    value = random.Next();
 
-            return value;
+                    // ViewModelのプロパティ更新
+                    _UpdateProperty(value);
+
+                }
+
+                return value;
+
+            });
 
         }
 
