@@ -1,5 +1,4 @@
 ﻿using Common.IPC;
-using System;
 using System.ServiceModel;
 
 namespace Client.Forms.Model
