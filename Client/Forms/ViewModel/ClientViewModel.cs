@@ -1,4 +1,5 @@
 ﻿using Common.MVVM;
+using System;
 
 namespace Client.Forms.ViewModel
 {
@@ -29,7 +30,18 @@ namespace Client.Forms.ViewModel
             set
             {
                 _IsEnabled = value;
-                CallPropertyChanged(nameof(IsEnabled));
+                CallPropertyChanged();
+            }
+        }
+
+        /// <summary>通信エラーメッセージ</summary>
+        public string ErrorMessage
+        {
+            get { return _ErrorMessage; }
+            set
+            {
+                _ErrorMessage = value;
+                CallPropertyChanged();
             }
         }
 
@@ -37,6 +49,9 @@ namespace Client.Forms.ViewModel
 
         /// <summary>ボタン操作許可</summary>
         private bool _IsEnabled = true;
+
+        /// <summary>通信エラーメッセージ</summary>
+        private string _ErrorMessage = "";
 
         /// <summary>クライアント.ViewModel</summary>
         public ClientViewModel()
@@ -49,12 +64,24 @@ namespace Client.Forms.ViewModel
                 {
 
                     IsEnabled = false;
+                    ErrorMessage = "";
 
-                    // プロセス間通信でサーバに指示を出し、結果を受け取る
-                    Result = await _Model.ExecuteServerSideAsync();
-                    CallPropertyChanged(nameof(Result));
+                    try
+                    {
 
-                    IsEnabled = true;
+                        // プロセス間通信でサーバに指示を出し、結果を受け取る
+                        Result = await _Model.ExecuteServerSideAsync();
+                        CallPropertyChanged(nameof(Result));
+
+                    }
+                    catch
+                    {
+                        ErrorMessage = "通信エラー発生";
+                    }
+                    finally
+                    {
+                        IsEnabled = true;
+                    }
 
                 },
                 () => true);

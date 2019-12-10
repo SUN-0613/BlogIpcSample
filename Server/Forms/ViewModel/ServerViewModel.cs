@@ -19,11 +19,17 @@ namespace Server.Forms.ViewModel
         /// <summary>現在値</summary>
         public int PresentValue { get; set; }
 
-        /// <summary>切断コマンド</summary>
-        public DelegateCommand CloseCommand { get; private set; }
+        /// <summary>通信コマンド</summary>
+        public DelegateCommand<string> ConnectCommand { get; private set; }
 
         /// <summary>ボタン操作許可</summary>
-        public bool IsEnabled { get; set; } = true;
+        public bool IsButtonEnabled { get; set; } = true;
+
+        /// <summary>開始ボタン操作許可</summary>
+        public bool IsOpenEnabled { get; set; } = true;
+
+        /// <summary>切断ボタン操作許可</summary>
+        public bool IsCloseEnabled { get; set; } = false;
 
         #endregion
 
@@ -31,13 +37,27 @@ namespace Server.Forms.ViewModel
         public ServerViewModel()
         {
 
-            _Model = new Model.ServerModel(UpdateProperty, UpdateEnabled);
+            _Model = new Model.ServerModel(UpdateProperty, UpdateButtonEnabled);
 
-            CloseCommand = new DelegateCommand(
-                () => 
+            ConnectCommand = new DelegateCommand<string>(
+                (parameter) => 
                 {
-                    _Model?.Dispose();
-                    UpdateEnabled(false);
+
+                    switch (parameter)
+                    {
+
+                        case "open":
+                            _Model.Open();
+                            UpdateConnectEnabled(true);
+                            break;
+
+                        case "close":
+                            _Model.Close();
+                            UpdateConnectEnabled(false);
+                            break;
+
+                    }
+
                 },
                 () => true);
 
@@ -53,12 +73,28 @@ namespace Server.Forms.ViewModel
 
         }
 
+        /// <summary>通信許可プロパティ更新</summary>
+        /// <param name="value">
+        /// true :通信開始
+        /// false:通信終了
+        /// </param>
+        private void UpdateConnectEnabled(bool value)
+        {
+
+            IsOpenEnabled = !value;
+            CallPropertyChanged(nameof(IsOpenEnabled));
+
+            IsCloseEnabled = value;
+            CallPropertyChanged(nameof(IsCloseEnabled));
+
+        }
+
         /// <summary>ボタン操作許可プロパティ更新</summary>
         /// <param name="value">更新値</param>
-        private void UpdateEnabled(bool value)
+        private void UpdateButtonEnabled(bool value)
         {
-            IsEnabled = value;
-            CallPropertyChanged(nameof(IsEnabled));
+            IsButtonEnabled = value;
+            CallPropertyChanged(nameof(IsButtonEnabled));
         }
 
     }

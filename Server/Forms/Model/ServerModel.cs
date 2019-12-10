@@ -21,13 +21,16 @@ namespace Server.Forms.Model
         public delegate void UpdateEnabledDelegate(bool value);
 
         /// <summary>IPC通信サービス</summary>
-        private ServiceHost _Host;
+        private ServiceHost _Host = null;
 
         /// <summary>プロパティ更新メソッド</summary>
         private UpdatePropertyDelegate _UpdateProperty;
 
         /// <summary>ボタン操作許可プロパティ更新</summary>
         private UpdateEnabledDelegate _UpdateEnabled;
+
+        /// <summary>IPC通信サービスを開始したか</summary>
+        private bool _IsOpen = false;
 
         /// <summary>サーバModel</summary>
         /// <param name="updateProperty">プロパティ更新メソッド</param>
@@ -38,12 +41,33 @@ namespace Server.Forms.Model
             _UpdateProperty = updateProperty;
             _UpdateEnabled = updateEnabled;
 
-            // IPC通信サービス開始
+        }
+
+        /// <summary>IPC通信サービス開始</summary>
+        public void Open()
+        {
+
             _Host = new ServiceHost(this, new Uri(Service.GetBaseAddress()));
             _Host.AddServiceEndpoint(typeof(IProcess), new NetNamedPipeBinding(), Service.GetEndpoint());
             _Host.Open();
+            _IsOpen = true;
 
         }
+
+        /// <summary>IPC通信サービス終了</summary>
+        public void Close()
+        {
+
+            if (_IsOpen)
+            {
+
+                _Host.Close();
+                _IsOpen = false;
+
+            }
+
+        }
+
 
         /// <summary>解放処理</summary>
         public void Dispose()
@@ -51,8 +75,7 @@ namespace Server.Forms.Model
 
             _UpdateProperty = null;
 
-            // IPC通信サービス終了
-            _Host.Close();
+            Close();
 
         }
 
